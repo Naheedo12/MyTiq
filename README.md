@@ -57,6 +57,11 @@ Ce projet est une application **full-stack** composée d’un **backend Laravel*
   <kbd>📄 Diagramme de Cas d'Utilisation UML</kbd>
 </a>
 
+- <a href="https://www.figma.com/design/AutcLkCvlY2cVqxRCaDxOr/MyTiq?node-id=0-1&t=jFHf1QloX3EsyCT8-1" target="_blank" style="text-decoration:none;">
+  <kbd>🎨 Maquettage Figma</kbd>
+</a>
+
+
 
 ---
 
