@@ -7,23 +7,31 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Events\UserRegistered;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMail;
 
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
         $user = User::create([
-            'name'  => $request->name,
+            'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user'
+            'role' => 'user',
         ]);
 
-        $token = $user->createToken('authtoken')->plainTextToken;
+        // déclenche l'event — listener lit $user et enverra le mail
+        event(new UserRegistered($user));
 
-        return response([
-            'message' => 'Registered successfully!',
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Inscription réussie. Un email de bienvenue sera envoyé.',
             'user' => $user,
+            'token' => $token,
         ], 201);
     }
 
