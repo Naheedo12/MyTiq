@@ -16,6 +16,11 @@ class TicketController extends Controller
     {
         return auth()->user()->tickets()->with('event')->get();
     }
+    
+    public function index_admin()
+    {
+        return Ticket::all();
+    }
 
     public function store(StoreTicketRequest $request)
     {
