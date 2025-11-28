@@ -22,13 +22,13 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/events',[EventController::class, 'index']);    
+    Route::get('/events',[EventController::class, 'index']);
 
     Route::get('/tickets', [TicketController::class, 'index']);
     Route::post('/tickets', [TicketController::class, 'store']);
     Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
     Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy']);
-    Route::get('/tickets/{ticket}/download', [TicketController::class, 'downloadPdf']); 
+    Route::get('/tickets/{ticket}/download', [TicketController::class, 'downloadPdf']);
 });
 
 

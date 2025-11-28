@@ -20,7 +20,7 @@ class TicketController extends Controller
     public function store(StoreTicketRequest $request)
     {
         $event = Event::findOrFail($request->event_id);
-    
+
         $user = auth()->user();
         $reference = strtoupper(Str::random(10));
         $seat = rand(1, $event->capacity);
@@ -31,7 +31,7 @@ class TicketController extends Controller
             'reference' => $reference,
             'seat_number' => $seat,
             'purchased_at' => now(),
-            'price' => $event->price, 
+            'price' => $event->price,
         ]);
 
         $pdf = Pdf::loadView('tickets.pdf', [
