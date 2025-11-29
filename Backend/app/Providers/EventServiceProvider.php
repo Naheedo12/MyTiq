@@ -8,6 +8,8 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use App\Events\UserRegistered;
 use App\Listeners\SendWelcomeEmail;
+use App\Events\TicketPurchased;
+use App\Listeners\SendTicketConfirmationMail;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -18,7 +20,10 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         UserRegistered::class => [
-            SendWelcomeEmail::class,
+            SendWelcomeEmail::class],
+
+        TicketPurchased::class => [
+            SendTicketConfirmationMail::class,
         ],
     ];
 
