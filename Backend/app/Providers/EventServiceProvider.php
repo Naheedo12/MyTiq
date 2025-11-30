@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Events\NewsletterConfirmMail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use App\Events\UserRegistered;
+use App\Listeners\SendConfirmMail;
 use App\Listeners\SendWelcomeEmail;
 
 class EventServiceProvider extends ServiceProvider
@@ -19,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         UserRegistered::class => [
             SendWelcomeEmail::class,
+        ],
+        NewsletterConfirmMail::class =>[
+            SendConfirmMail::class,
         ],
     ];
 
