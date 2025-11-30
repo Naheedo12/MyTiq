@@ -9,6 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
+use App\Events\TicketPurchased;
 
 class TicketController extends Controller
 {
@@ -49,6 +50,8 @@ class TicketController extends Controller
         \Storage::put($pdfPath, $pdf->output());
 
         $ticket->update(['pdf_path' => $pdfPath]);
+
+        TicketPurchased::dispatch($ticket);
 
         return response()->json([
             "message" => "Ticket réservé avec succès 🎫",

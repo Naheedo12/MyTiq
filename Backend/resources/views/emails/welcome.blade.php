@@ -11,5 +11,4 @@ Voir les événements
 Si vous avez des questions, répondez à cet email.
 
 Merci,<br>
-{{ config('app.name') }}
 @endcomponent
