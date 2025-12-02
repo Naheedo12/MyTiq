@@ -7,22 +7,20 @@ import Login from './pages/Login';
 import EventDetail from "./pages/EventDetail";
 import Dashboard from "./pages/Dashboard";
 import Ticket from "./pages/Ticket";
-import PageLayout from "./pages/Propos";
+import PageLayout from "./pages/Propos"; 
 
 function App() {
-
   return (
     <>
-  <Routes>
-      <Route path="/" element={<><NavBar /><Home /><Footer /></>} />
-      <Route path="/signup" element={<><NavBar /><Signup /><Footer /></>} />
-      <Route path="/login" element={<><NavBar /><Login /><Footer /></>} />
-      <Route path="/ticket" element={<><NavBar /><Ticket /><Footer /></>} />
-      <Route path="/eventDetail" element={<><NavBar /><EventDetail /><Footer /></>} />
-      <Route path="/about" element={<><NavBar /><PageLayout /><Footer /></>} />
-
-      <Route path="/dashboard" element={<Dashboard />} />
-    </Routes>
+      <Routes>
+        <Route path="/" element={<><NavBar /><Home /><Footer /></>} />
+        <Route path="/signup" element={<><NavBar /><Signup /><Footer /></>} />
+        <Route path="/login" element={<><NavBar /><Login /><Footer /></>} />
+        <Route path="/ticket" element={<><NavBar /><Ticket /><Footer /></>} />
+        <Route path="/eventDetail" element={<><NavBar /><EventDetail /><Footer /></>} />
+        <Route path="/about" element={<><NavBar /><PageLayout /><Footer /></>} /> {/* gardé */}
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
     </>
   )
 }
