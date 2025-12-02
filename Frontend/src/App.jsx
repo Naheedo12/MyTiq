@@ -6,7 +6,7 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import EventDetail from "./pages/EventDetail";
 import Dashboard from "./pages/Dashboard";
-import { Ticket } from "lucide-react";
+import Ticket from "./pages/Ticket";
 
 function App() {
 
