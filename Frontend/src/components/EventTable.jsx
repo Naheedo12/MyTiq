@@ -1,4 +1,11 @@
+import React, { useState } from 'react';
+// 1. Importer le composant AddEvent
+import AddEvent from './AddEvent'; 
+
 export default function EventTable() {
+  // 2. État pour contrôler l'affichage du formulaire AddEvent
+  const [isFormVisible, setIsFormVisible] = useState(false);
+
   const events = [
     { id: 1, name: "Summer Music Festival", date: "2024-08-15", location: "Central Park", ticketsSold: "4,500", totalTickets: "5,000", status: "Published" },
     { id: 2, name: "Tech Conference 2024", date: "2024-09-22", location: "Convention Center", ticketsSold: "1,230", totalTickets: "2,000", status: "Published" },
@@ -15,11 +22,34 @@ export default function EventTable() {
     }
   };
 
+  // Fonction pour ouvrir le formulaire
+  const handleAddEventClick = () => {
+    setIsFormVisible(true);
+  };
+
+  // Fonction pour fermer le formulaire (passée au composant AddEvent via la prop onClose)
+  const handleCloseForm = () => {
+    setIsFormVisible(false);
+    // Ici, vous pourriez ajouter une logique pour recharger les données des événements après une création/modification
+  };
+
+  // Logique d'affichage conditionnel :
+  // Si le formulaire est visible, nous l'affichons
+  if (isFormVisible) {
+    // 3. Affichage du composant AddEvent avec la fonction de fermeture
+    return <AddEvent onClose={handleCloseForm} />;
+  }
+
+  // Sinon, nous affichons le tableau
   return (
     <div className="bg-white rounded-lg border border-gray-200">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <h3 className="text-lg font-semibold text-gray-900">Event Management</h3>
-        <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+        {/* 4. Attacher l'événement onClick au bouton */}
+        <button 
+          onClick={handleAddEventClick}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+        >
           + Add Event
         </button>
       </div>
