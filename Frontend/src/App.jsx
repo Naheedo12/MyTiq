@@ -5,23 +5,22 @@ import Home from "./pages/Home"
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import EventDetail from "./pages/EventDetail";
-import Ticket from "./pages/Ticket";
+import Dashboard from "./pages/Dashboard";
+import { Ticket } from "lucide-react";
 
 function App() {
 
   return (
     <>
-      <NavBar/>
+  <Routes>
+      <Route path="/" element={<><NavBar /><Home /><Footer /></>} />
+      <Route path="/signup" element={<><NavBar /><Signup /><Footer /></>} />
+      <Route path="/login" element={<><NavBar /><Login /><Footer /></>} />
+      <Route path="/ticket" element={<><NavBar /><Ticket /><Footer /></>} />
+      <Route path="/eventDetail" element={<><NavBar /><EventDetail /><Footer /></>} />
 
-      <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/signup" element={<Signup/>}/>
-        <Route path="/login" element={<Login/>}/>
-         <Route path="/EventDetail" element={<EventDetail/>}/>
-         <Route path="/Ticket" element={<Ticket/>}/>
-      </Routes>
-      
-      <Footer/>
+      <Route path="/dashboard" element={<Dashboard />} />
+    </Routes>
     </>
   )
 }
