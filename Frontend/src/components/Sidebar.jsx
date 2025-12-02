@@ -1,10 +1,15 @@
 import UserProfile from "./UserProfile";
+import { Link } from "react-router-dom";
 
 export default function Sidebar() {
   return (
     <div className="w-48 bg-white border-r border-gray-200 flex flex-col h-screen">
       <div className="px-6 py-8">
-        <h2 className="text-xl font-bold text-green-600">MyTiq</h2>
+        <h2 className="text-xl font-bold text-green-600">
+            <Link to="/">            
+                MyTiq
+            </Link>
+        </h2>
       </div>
 
       <nav className="flex-1 px-4 space-y-2">

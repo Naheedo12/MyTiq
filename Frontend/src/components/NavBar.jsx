@@ -14,11 +14,11 @@ function NavBar() {
         <Link to="/about" className="hover:text-[#40916C] font-medium">
           About Us
         </Link>
-        <Link to="/events" className="hover:text-[#40916C] font-medium">
-          Events
+        <Link to="/ticket" className="hover:text-[#40916C] font-medium">
+          Tickets
         </Link>
-        <Link to="/contact" className="hover:text-[#40916C] font-medium">
-          Contact
+        <Link to="/dashboard" className="hover:text-[#40916C] font-medium">
+          Dashboard
         </Link>
       </nav>
 
