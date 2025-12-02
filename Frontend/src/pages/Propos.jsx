@@ -42,7 +42,7 @@ const PageLayout = () => {
               </p>
 
               <Link
-                to="/EventDetail"
+                to="/"
                 className="bg-[#40916C] hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 shadow-lg"
               >
                 explore events &rarr;
