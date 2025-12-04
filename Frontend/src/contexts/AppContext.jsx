@@ -6,11 +6,17 @@ export const AppContext=createContext();
 export const AppProvider=({children})=>{
 
     const [events,setEvents]=useState([]);
-    const [tickets,setTickets]=useState([]);
+    const [newsletter,setNewsletter]=useState([]);
 
-const addEvent = async (newevent) => {
+const addEvent = async (formData) => {
     try {
-      const res = await axios.post('http://127.0.0.1:8000/api/events', newevent);
+        const token = localStorage.getItem("token");
+      const res = await axios.post('http://127.0.0.1:8000/api/events', formData,{
+       headers: {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'multipart/form-data',
+  },
+      });
       setEvents((prev) => [...prev, res.data])
     } catch (err) {
       console.error("Erreur lors de l'ajout de l'evenement:", err);
@@ -18,7 +24,7 @@ const addEvent = async (newevent) => {
     }
   };
 
-  const getEvent = async ()=>{
+  const getEvents = async ()=>{
     try{
 const event= await axios.get('http://127.0.0.1:8000/api/events');
     setEvents(event.data.events);
@@ -28,13 +34,24 @@ const event= await axios.get('http://127.0.0.1:8000/api/events');
     }
     
   }
+  const addNew = async (email)=>{
+    try{
+const res= await axios.post('http://127.0.0.1:8000/api/newsletter/subscribe',{ email });
+    setNewsletter((prev) => [...prev, res.data])
+    }catch (err) {
+      console.error("Erreur lors de l'affiche de l'evenement:", err);
+      
+    }
+    
+  }
+  
    useEffect(() => {
-    getEvent();
+    getEvents();
   }, []);
 
     return(
         <AppContext.Provider
-      value={{ addEvent, events }}
+      value={{ addEvent, events, addNew }}
     >
       {children}
     </AppContext.Provider>

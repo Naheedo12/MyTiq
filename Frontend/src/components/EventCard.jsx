@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { AppContext } from "../contexts/AppContext";
 import { Calendar, MapPin } from "lucide-react"
+import { Link } from "react-router-dom";
 
 
 function EventCard(){
@@ -37,9 +38,12 @@ function EventCard(){
 
 <div className="flex items-center justify-between mt-4">
 <span className="text-[#40916C] font-semibold">{event.price} DH</span>
+<Link to={`/eventDetail/${event.id}`}>
 <button className="px-4 py-1 border border-[#40916C] text-[#40916C] rounded-full hover:bg-[#40916C] hover:text-white transition text-sm">
 voir détails
 </button>
+</Link>
+
 </div>
 </div>
 ))}

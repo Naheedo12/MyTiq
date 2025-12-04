@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-const AddEvent = ({ onClose }) => {
+import React, { useContext, useState } from "react";
+import { AppContext } from "../contexts/AppContext";
+function AddEvent(){
   const [eventData, setEventData] = useState({
     title: "",
     date: "",
-    time: "",
+    capacity: "",
     location: "",
     description: "",
-    capacity: "",
-    ticketPrice: "",
-    imageFile: null,
+    price: "",
+    image_path: null,
+    status:"",
   });
+  const { addEvent }=useContext(AppContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,23 +23,38 @@ const AddEvent = ({ onClose }) => {
   const handleImageChange = (e) => {
     setEventData((prevData) => ({
       ...prevData,
-      imageFile: e.target.files[0],
+      image_path: e.target.files[0],
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Nouvel événement soumis :", eventData);
 
-    console.log(
-      `L'événement "${
-        eventData.title || "Sans titre"
-      }" est prêt à être ajouté ! (Soumission simulée)`
-    );
+    const formData = new FormData();
 
-    if (onClose) {
-      onClose();
-    }
+  formData.append("title", eventData.title);
+  formData.append("date", eventData.date);
+  formData.append("capacity", eventData.capacity);
+  formData.append("location", eventData.location);
+  formData.append("description", eventData.description);
+  formData.append("price", eventData.price);
+  formData.append("image_path", eventData.image_path);
+  formData.append("status", eventData.status);
+
+  await addEvent(formData);
+
+    setEventData({
+      title: "",
+      date: "",
+      capacity:"",
+      location: "",
+      description: "",
+      price: "",
+      image_path: null,
+      status:"",
+    });
+
+    
   };
 
   return (
@@ -66,7 +83,7 @@ const AddEvent = ({ onClose }) => {
           />
         </div>
 
-        {/* Champ 2: Date */}
+     
         <div>
           <label
             htmlFor="date"
@@ -79,25 +96,6 @@ const AddEvent = ({ onClose }) => {
             name="date"
             id="date"
             value={eventData.date}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-green-500 focus:border-green-500"
-          />
-        </div>
-
-        {/* Champ 3: Time (Heure) */}
-        <div>
-          <label
-            htmlFor="time"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Heure
-          </label>
-          <input
-            type="time"
-            name="time"
-            id="time"
-            value={eventData.time}
             onChange={handleChange}
             required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-green-500 focus:border-green-500"
@@ -152,14 +150,33 @@ const AddEvent = ({ onClose }) => {
           </label>
           <input
             type="number"
-            name="ticketPrice"
-            id="ticketPrice"
-            value={eventData.ticketPrice}
+            name="price"
+            id="price"
+            value={eventData.price}
             onChange={handleChange}
             placeholder="Ex: 150"
             required
             min="0"
             step="any"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-green-500 focus:border-green-500"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="ticketPrice"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Status
+          </label>
+          <input
+            type="text"
+            name="status"
+            id="status"
+            value={eventData.status}
+            onChange={handleChange}
+            placeholder="Ex: active"
+            required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-green-500 focus:border-green-500"
           />
         </div>
@@ -192,8 +209,8 @@ const AddEvent = ({ onClose }) => {
           </label>
           <input
             type="file"
-            name="imageFile"
-            id="imageFile"
+            name="image_path"
+            id="image_path"
             accept="image/*"
             onChange={handleImageChange}
             required
@@ -204,9 +221,9 @@ const AddEvent = ({ onClose }) => {
               file:bg-green-50 file:text-green-700
               hover:file:bg-green-100"
           />
-          {eventData.imageFile && (
+          {eventData.image_path && (
             <p className="mt-2 text-sm text-gray-500">
-              Fichier sélectionné: {eventData.imageFile.name}
+              Fichier sélectionné: {eventData.image_path.name}
             </p>
           )}
         </div>
@@ -221,7 +238,7 @@ const AddEvent = ({ onClose }) => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
 export default AddEvent;

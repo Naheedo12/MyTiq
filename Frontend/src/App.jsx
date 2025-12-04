@@ -17,7 +17,7 @@ function App() {
         <Route path="/" element={<><NavBar /><Home /><Footer /></>} />
         <Route path="/signup" element={<><NavBar /><Signup /><Footer /></>} />
         <Route path="/login" element={<><NavBar /><Login /><Footer /></>} />
-        <Route path="/eventDetail" element={<><NavBar /><EventDetail /><Footer /></>} />
+        <Route path="/eventDetail/:id" element={<><NavBar /><EventDetail /><Footer /></>} />
         <Route path="/about" element={<><NavBar /><PageLayout /><Footer /></>} />
         
         <Route path="/ticket" element={
