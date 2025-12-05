@@ -7,7 +7,8 @@ export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
     const [events, setEvents] = useState([]);
-    const [newsletter, setNewsletter] = useState([]); 
+    const [newsletter, setNewsletter] = useState([]);
+    const [ticket, setTicket] = useState([]); 
 
     // --- Fonctions de CRUD ---
 
@@ -29,10 +30,23 @@ export const AppProvider = ({ children }) => {
 
     const getEvents = async () => {
         try {
+           const token = localStorage.getItem("token");
             const event = await axios.get('http://127.0.0.1:8000/api/events');
             setEvents(event.data.events);
+            const ticket = await axios.get('http://127.0.0.1:8000/api/ticketsAdmin', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+            setTicket(ticket.data.Tickets);
+            const newsletter = await axios.get('http://127.0.0.1:8000/api/newsletter', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+            setNewsletter(newsletter.data.newsletter);
         } catch (err) {
-            console.error("Erreur lors de l'affiche de l'evenement:", err);
+            console.error("Erreur :", err);
         }
     };
 
@@ -87,7 +101,7 @@ export const AppProvider = ({ children }) => {
 
     return (
         <AppContext.Provider
-            value={{ addEvent, events, addNew, deleteEvent, updateEvent }} 
+            value={{ addEvent, events,ticket,newsletter, addNew, deleteEvent, updateEvent }} 
         >
             {children}
         </AppContext.Provider>

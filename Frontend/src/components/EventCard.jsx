@@ -27,7 +27,7 @@ function EventCard(){
 <div className="mt-4 space-y-2 text-gray-700">
                 <div className="flex items-center gap-2 text-sm">
                   <Calendar className="w-5 h-5 text-gray-800" />
-                  <span>{event.date}</span>
+                  <span>{new Date(event.date).toLocaleDateString()}</span>
                 </div>
 
                 <div className="flex items-center gap-2 text-sm">

@@ -10,6 +10,10 @@ use Illuminate\Support\Str;
 
 class NewsletterController extends Controller
 {
+    public function index(){
+        $newsletter=NewsletterSubscription::all();
+        return response()->json(['newsletter'=>$newsletter]);
+    }
     public function subscribe(NewslatterRequest $request){
         $news=$request->validated();
         $token=Str::random(40);

@@ -29,7 +29,7 @@ function EventDetail(){
             <div>
               <p className="font-semibold">Date & Time</p>
               <p className="text-sm">
-                {event.date}
+                {new Date(event.date).toLocaleString()}
               </p>
             </div>
           </div>

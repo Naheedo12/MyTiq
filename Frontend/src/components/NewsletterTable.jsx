@@ -1,10 +1,8 @@
+import { useContext } from "react";
+import { AppContext } from "../contexts/AppContext";
+
 function NewsletterTable(){
-    const news = [
-    { id: 1, email: "qwer@gmail.com", subscribed_at: "2024-08-15", confirmed: "oui"},
-    { id: 1, email: "qwer@gmail.com", subscribed_at: "2024-08-15", confirmed: "oui"},
-    { id: 1, email: "qwer@gmail.com", subscribed_at: "2024-08-15", confirmed: "oui"},
-    { id: 4, email: "qwer@gmail.com", subscribed_at: "2024-08-15", confirmed: "oui"},
-  ];
+    const { newsletter }  = useContext(AppContext);
     return(
         <div className="bg-white rounded-lg border border-gray-200">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
@@ -22,13 +20,13 @@ function NewsletterTable(){
             </tr>
           </thead>
           <tbody>
-            {news.map((news) => (
+            {newsletter.map((news) => (
               <tr key={news.id} className="border-b border-gray-200 hover:bg-gray-50">
                 <td className="px-6 py-4 text-sm font-medium text-gray-900">{news.id}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{news.email}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{news.subscribed_at}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{news.confirmed}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{news.price}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{new Date(news.subscribed_at).toLocaleString()}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{news.confirmed === true ? "Confirmé" : "Non confirmé"}</td>
+               
 
               </tr>
             ))}

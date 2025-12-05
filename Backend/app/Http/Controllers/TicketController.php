@@ -17,10 +17,11 @@ class TicketController extends Controller
     {
         return auth()->user()->tickets()->with('event')->get();
     }
-    
-    public function index_admin()
+
+    public function indexAdmin()
     {
-        return Ticket::all();
+        $tickets=Ticket::all();
+        return response()->json(['Tickets'=>$tickets]);
     }
 
     public function store(StoreTicketRequest $request)

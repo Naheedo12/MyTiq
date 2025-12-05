@@ -44,7 +44,8 @@ Route::middleware('auth:sanctum','role:admin')->group(function () {
     Route::post('/events',[EventController::class, 'store']);
     Route::post('/events/{event}',[EventController::class, 'update']);
     Route::delete('/events/{event}',[EventController::class, 'destroy']);
+    Route::get('/ticketsAdmin', [TicketController::class, 'indexAdmin']);
+    Route::get('/newsletter', [NewsletterController::class, 'index']);
 
-    Route::get('/tickets_admin', [TicketController::class, 'index_admin']);
 });
 

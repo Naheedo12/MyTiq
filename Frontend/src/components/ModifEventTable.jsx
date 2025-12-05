@@ -82,7 +82,7 @@ function ModifEventTable({
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    {renderCell(event, 'date', 'date')}
+                                    {new Date(renderCell(event, 'date', 'date')).toLocaleString()}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                     {renderCell(event, 'location')}
