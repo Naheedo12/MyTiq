@@ -22,6 +22,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/events',[EventController::class, 'index']);
+Route::get('/events/{event}',[EventController::class, 'show']);
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe']);
 Route::get('/newsletter/confirm', [NewsletterController::class, 'confirm']);
 Route::get('/newsletter/check', [NewsletterController::class, 'check']);

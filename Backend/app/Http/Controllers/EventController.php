@@ -16,6 +16,11 @@ class EventController extends Controller
                                  'events'=>$events]);
     }
 
+    public function show(Event $event){
+        return response()->json(['events'=>$event]);
+
+    }
+
     public function store(StoreEventRequest $Request){
         $admin=Auth::user();
          $event=$Request->validated();
