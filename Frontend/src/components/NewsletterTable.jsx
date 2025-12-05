@@ -1,0 +1,41 @@
+function NewsletterTable(){
+    const news = [
+    { id: 1, email: "qwer@gmail.com", subscribed_at: "2024-08-15", confirmed: "oui"},
+    { id: 1, email: "qwer@gmail.com", subscribed_at: "2024-08-15", confirmed: "oui"},
+    { id: 1, email: "qwer@gmail.com", subscribed_at: "2024-08-15", confirmed: "oui"},
+    { id: 4, email: "qwer@gmail.com", subscribed_at: "2024-08-15", confirmed: "oui"},
+  ];
+    return(
+        <div className="bg-white rounded-lg border border-gray-200">
+      <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 className="text-lg font-semibold text-gray-900">NewsLetter Management</h3>
+        
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">Id</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">Email</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">Subscribed_at</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">Confirmed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {news.map((news) => (
+              <tr key={news.id} className="border-b border-gray-200 hover:bg-gray-50">
+                <td className="px-6 py-4 text-sm font-medium text-gray-900">{news.id}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{news.email}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{news.subscribed_at}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{news.confirmed}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{news.price}</td>
+
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    )
+}
+export default NewsletterTable;

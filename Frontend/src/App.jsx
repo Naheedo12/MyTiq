@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Ticket from "./pages/Ticket";
 import PageLayout from "./pages/Propos"; 
 import { isAuthenticated } from "./services/auth";
+import TicketTable from "./components/TicketTable";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Navigate to="/login" replace />
           )
         } />
+
       </Routes>
     </>
   )
