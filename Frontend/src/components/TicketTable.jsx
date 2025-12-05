@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { AppContext } from "../contexts/AppContext";
 
 function TicketTable(){
-    const { ticket } = useContext(AppContext);
+    const { tickets } = useContext(AppContext);
     return(
         <div className="bg-white rounded-lg border border-gray-200">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
@@ -21,7 +21,7 @@ function TicketTable(){
             </tr>
           </thead>
           <tbody>
-            {ticket.map((ticket) => (
+            {tickets.map((ticket) => (
               <tr key={ticket.id} className="border-b border-gray-200 hover:bg-gray-50">
                 <td className="px-6 py-4 text-sm font-medium text-gray-900">{ticket.id}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{ticket.reference}</td>
