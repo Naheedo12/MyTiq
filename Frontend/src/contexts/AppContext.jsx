@@ -7,9 +7,8 @@ export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
     const [events, setEvents] = useState([]);
-    const [newsletter, setNewsletter] = useState([]); 
-
-    // --- Fonctions de CRUD ---
+    const [newsletter, setNewsletter] = useState([]);
+    const [tickets, setTickets] = useState([]);
 
     const addEvent = async (formData) => {
         try {
@@ -22,7 +21,6 @@ export const AppProvider = ({ children }) => {
             setEvents((prev) => [...prev, res.data.event]);
         } catch (err) {
             console.error("Erreur lors de l'ajout de l'evenement:", err);
-            // On lève l'erreur pour la gestion côté composant (AddEvent.jsx)
             throw err;
         }
     };
@@ -36,18 +34,15 @@ export const AppProvider = ({ children }) => {
         }
     };
 
-    // Fonction de mise à jour (utilisée par EventTable.jsx)
     const updateEvent = async (id, formData) => {
         try {
             const token = localStorage.getItem("token");
-            // Utilise POST vers l'ID pour la mise à jour des données (méthode courante pour FormData dans Laravel)
             const res = await axios.post(`http://127.0.0.1:8000/api/events/${id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
             
-            // Mise à jour de l'état local avec l'événement retourné par l'API
             setEvents(events.map(event => 
                 event.id === id ? res.data.event : event
             ));
@@ -56,7 +51,6 @@ export const AppProvider = ({ children }) => {
             
         } catch (err) {
             console.error(`Erreur lors de la mise à jour de l'événement ID ${id}:`, err);
-            // Laisse l'erreur se propager pour être gérée dans EventTable.jsx
             throw err; 
         }
     };
@@ -78,16 +72,88 @@ export const AppProvider = ({ children }) => {
         }
     };
 
-    const addNew = async (email) => { /* ... */ };
-    // ----------------------------------------------------
+    const purchaseTicket = async (eventId) => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await axios.post('http://127.0.0.1:8000/api/tickets', 
+                { event_id: eventId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            
+            await getUserTickets();
+            
+            return res.data;
+        } catch (err) {
+            console.error("Erreur lors de l'achat du ticket:", err);
+            throw err;
+        }
+    };
 
+    const getUserTickets = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await axios.get('http://127.0.0.1:8000/api/tickets', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setTickets(Array.isArray(res.data) ? res.data : res.data.tickets || []);
+        } catch (err) {
+            console.error("Erreur lors de la récupération des tickets:", err);
+        }
+    };
+
+    const downloadTicketPdf = async (ticketId) => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await axios.get(`http://127.0.0.1:8000/api/tickets/${ticketId}/download`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                responseType: 'blob',
+            });
+            
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `ticket-${ticketId}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error("Erreur lors du téléchargement du PDF:", err);
+            throw err;
+        }
+    };
+    const addNew = async (email) => { 
+        /* ... */ 
+    };
     useEffect(() => {
         getEvents();
+        const token = localStorage.getItem("token");
+        if (token) {
+            getUserTickets();
+        }
     }, []);
 
     return (
         <AppContext.Provider
-            value={{ addEvent, events, addNew, deleteEvent, updateEvent }} 
+            value={{ 
+                addEvent, 
+                events, 
+                deleteEvent, 
+                updateEvent,
+                tickets,
+                purchaseTicket,
+                getUserTickets,
+                downloadTicketPdf,
+                addNew
+            }} 
         >
             {children}
         </AppContext.Provider>
