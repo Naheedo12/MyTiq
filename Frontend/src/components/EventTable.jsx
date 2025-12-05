@@ -1,89 +1,156 @@
-import React, { useState } from 'react';
-// 1. Importer le composant AddEvent
-import AddEvent from './AddEvent'; 
+// src/components/EventTable.jsx
+
+import React, { useState, useContext } from "react";
+import AddEvent from "./AddEvent";
+import ModifEventTable from "./ModifEventTable"; 
+import { AppContext } from "../contexts/AppContext";
+import { Plus } from "lucide-react"; 
 
 export default function EventTable() {
-  // 2. État pour contrôler l'affichage du formulaire AddEvent
-  const [isFormVisible, setIsFormVisible] = useState(false);
+    const [isFormVisible, setIsFormVisible] = useState(false);
+    const [editingEventId, setEditingEventId] = useState(null); 
+    const [editedEventData, setEditedEventData] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null); 
 
-  const events = [
-    { id: 1, name: "Summer Music Festival", date: "2024-08-15", location: "Central Park", ticketsSold: "4,500", totalTickets: "5,000", status: "Published" },
-    { id: 2, name: "Tech Conference 2024", date: "2024-09-22", location: "Convention Center", ticketsSold: "1,230", totalTickets: "2,000", status: "Published" },
-    { id: 3, name: "Art & Wine Fair", date: "2024-10-05", location: "City Gallery", ticketsSold: "0", totalTickets: "300", status: "Draft" },
-    { id: 4, name: "Charity Gala Dinner", date: "2023-12-10", location: "Grand Hotel Ballroom", ticketsSold: "250", totalTickets: "250", status: "Completed" },
-  ];
+    const { events, deleteEvent, updateEvent } = useContext(AppContext); 
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Published": return "bg-green-100 text-green-800";
-      case "Draft": return "bg-yellow-100 text-yellow-800";
-      case "Completed": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
+    // 🛑 LOGIQUE DE COULEUR POUR LES STATUTS 🛑
+    const getStatusColor = (status) => {
+        const s = status ? status.toLowerCase() : "";
+        switch (s) {
+            case "active":
+                return "bg-green-100 text-green-800 border border-green-200";
+            case "completed":
+                return "bg-gray-100 text-gray-800 border border-gray-200";
+            case "canceled":
+                return "bg-red-100 text-red-800 border border-red-200";
+            default:
+                return "bg-blue-50 text-blue-800 border border-blue-200";
+        }
+    };
+
+    const handleAddEventClick = () => {
+        setEditingEventId(null); 
+        setIsFormVisible(true);
+    };
+
+    const handleCloseForm = () => {
+        setIsFormVisible(false);
+    };
+
+    const handleDelete = (id) => {
+        if (window.confirm("Êtes-vous sûr de vouloir supprimer cet événement ?")) {
+            deleteEvent(id); 
+        }
+    };
+
+    const handleEdit = (event) => {
+        if (event && event.id) {
+            setEditingEventId(event.id);
+            setEditedEventData(event); 
+        } else {
+            setEditingEventId(null);
+            setEditedEventData(null);
+        }
+        setIsFormVisible(false); 
+    };
+
+    const handleInlineChange = (name, value) => {
+        setEditedEventData(prevData => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    // 🛑 LOGIQUE DE SAUVEGARDE 🛑
+    const handleSaveInline = async () => {
+        if (!editingEventId || !editedEventData) return;
+
+        const formData = new FormData();
+        
+        const currentEvent = events.find(e => e.id === editingEventId);
+        const dataToSend = { ...currentEvent, ...editedEventData };
+
+
+        Object.keys(dataToSend).forEach(key => {
+            const value = dataToSend[key];
+            
+            if (key === 'id') return;
+
+            // Exclusion des chaînes d'URL d'image et des objets non-fichiers
+            if (key === 'image_path' && typeof value === 'string') return; 
+            if (typeof value === 'object' && value !== null && !(value instanceof File)) return; 
+
+            // Append seulement si la valeur n'est ni null, ni undefined
+            if (value !== null && value !== undefined) {
+                 formData.append(key, value);
+            }
+        });
+        
+        try {
+            await updateEvent(editingEventId, formData); 
+            
+            setEditingEventId(null);
+            setEditedEventData(null);
+
+            setSuccessMessage("La modification a été effectuée avec succès.");
+            setTimeout(() => setSuccessMessage(null), 4000); 
+
+        } catch (error) {
+            console.error("Erreur détaillée lors de la sauvegarde:", error.response?.data || error.message);
+            
+            const validationErrors = error.response?.data?.errors;
+            const statusError = validationErrors?.status?.[0]; 
+            
+            const errorMessage = statusError || error.response?.data?.message || "Échec de la sauvegarde de l'événement.";
+            alert(`${errorMessage} Veuillez vérifier la console (F12) pour les détails de validation.`); 
+        }
+    };
+
+    if (isFormVisible) {
+        return <AddEvent onClose={handleCloseForm} />;
     }
-  };
 
-  // Fonction pour ouvrir le formulaire
-  const handleAddEventClick = () => {
-    setIsFormVisible(true);
-  };
+    return (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            
+            {successMessage && (
+                <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
+                    <p className="font-bold">Succès de l'opération</p>
+                    <p>{successMessage}</p>
+                </div>
+            )}
+            
+            <div className="px-6 py-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                    <h3 className="text-xl font-bold text-gray-900">
+                        Gestion des Événements
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                        Gérez vos conférences, ateliers et soirées.
+                    </p>
+                </div>
 
-  // Fonction pour fermer le formulaire (passée au composant AddEvent via la prop onClose)
-  const handleCloseForm = () => {
-    setIsFormVisible(false);
-    // Ici, vous pourriez ajouter une logique pour recharger les données des événements après une création/modification
-  };
+                <button
+                    onClick={handleAddEventClick}
+                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                >
+                    <Plus className="w-4 h-4" />
+                    Ajouter Événement
+                </button>
+            </div>
 
-  // Logique d'affichage conditionnel :
-  // Si le formulaire est visible, nous l'affichons
-  if (isFormVisible) {
-    // 3. Affichage du composant AddEvent avec la fonction de fermeture
-    return <AddEvent onClose={handleCloseForm} />;
-  }
-
-  // Sinon, nous affichons le tableau
-  return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">Event Management</h3>
-        {/* 4. Attacher l'événement onClick au bouton */}
-        <button 
-          onClick={handleAddEventClick}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
-        >
-          + Add Event
-        </button>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">Event Name</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">Location</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">Tickets Sold</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {events.map((event) => (
-              <tr key={event.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-6 py-4 text-sm font-medium text-gray-900">{event.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{event.date}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{event.location}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{event.ticketsSold} / {event.totalTickets}</td>
-                <td className="px-6 py-4 text-sm">
-                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(event.status)}`}>{event.status}</span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-600 flex gap-3">
-                  <button className="text-blue-600 hover:text-blue-700 font-medium">✏️</button>
-                  <button className="text-red-600 hover:text-red-700 font-medium">🗑️</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+            <ModifEventTable
+                events={events} 
+                handleDelete={handleDelete} 
+                getStatusColor={getStatusColor} 
+                
+                editingEventId={editingEventId}
+                editedEventData={editedEventData}
+                handleEdit={handleEdit} 
+                handleSaveInline={handleSaveInline} 
+                handleInlineChange={handleInlineChange} 
+            />
+        </div>
+    );
 }
