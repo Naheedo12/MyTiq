@@ -3,11 +3,19 @@ import Header from "../components/Header";
 import StatCard from "../components/StatCard";
 import EventTable from "../components/EventTable";
 import TicketTable from "../components/TicketTable";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import NewsletterTable from "../components/NewsletterTable";
+import { AppContext } from "../contexts/AppContext";
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState("events");
+  const {tickets} = useContext(AppContext);
+  const {events} = useContext(AppContext);
+  const {newsletter} = useContext(AppContext);
+
+  const countTickets=tickets.length;
+  const countEvents=events.length;
+  const countNewsletter=newsletter.length;
 
   const renderContent = () => {
     switch (activeSection) {
@@ -33,21 +41,21 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <StatCard
               title="Tickets Purchased"
-              value="12,456"
+              value={countTickets}
               icon="🎫"
               backgroundColor="bg-green-50"
               iconColor="text-green-600"
             />
             <StatCard
-              title="Remaining Capacity"
-              value="38,720"
+              title="Events Capacity"
+              value={countEvents}
               icon="🎟️"
               backgroundColor="bg-blue-50"
               iconColor="text-blue-600"
             />
             <StatCard
               title="Newsletter Subscribers"
-              value="8,312"
+              value={countNewsletter}
               icon="📧"
               backgroundColor="bg-purple-50"
               iconColor="text-purple-600"

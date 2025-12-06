@@ -46,6 +46,8 @@ Route::middleware('auth:sanctum','role:admin')->group(function () {
     Route::delete('/events/{event}',[EventController::class, 'destroy']);
     Route::get('/ticketsAdmin', [TicketController::class, 'indexAdmin']);
     Route::get('/newsletter', [NewsletterController::class, 'index']);
+    Route::get('/numberTickets', [TicketController::class, 'numberTickets']);
+
 
 });
 

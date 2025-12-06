@@ -82,4 +82,9 @@ class TicketController extends Controller
     {
         return response()->download(storage_path('app/' . $ticket->pdf_path));
     }
+
+    public function numberTickets(){
+        $number=Ticket::count();
+        return response()->json(["nombre ticket"=>$number]);
+    }
 }
