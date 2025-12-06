@@ -1,11 +1,37 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../contexts/AppContext"; 
 import { Calendar, MapPin } from "lucide-react";    
 import { Link } from "react-router-dom";            
 
-function EventCard() {
-  // Récupération des événements depuis le Context
+function EventCard({ searchQuery }) {
   const { events } = useContext(AppContext);
+  const [filteredEvents, setFilteredEvents] = useState(events);
+
+  // Filtrer les événements en fonction de la recherche
+  useEffect(() => {
+    if (!searchQuery || searchQuery.trim() === "") {
+      setFilteredEvents(events);
+    } else {
+      const query = searchQuery.toLowerCase();
+      const filtered = events.filter((event) => {
+        // Recherche par nom
+        const matchTitle = event.title.toLowerCase().includes(query);
+        
+        // Recherche par lieu/pays
+        const matchLocation = event.location.toLowerCase().includes(query);
+        
+        // Recherche par date
+        const eventDate = new Date(event.date).toLocaleDateString('fr-FR');
+        const matchDate = eventDate.includes(query);
+        
+        // Recherche par prix
+        const matchPrice = event.price.toString().includes(query);
+        
+        return matchTitle || matchLocation || matchDate || matchPrice;
+      });
+      setFilteredEvents(filtered);
+    }
+  }, [searchQuery, events]);
 
   return (
     <section className="px-6 md:px-12 py-12">
@@ -24,8 +50,13 @@ function EventCard() {
       </div>
 
       {/* Grille des événements */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {events.map((event) => (
+      {filteredEvents.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">Aucun événement trouvé pour "{searchQuery}"</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredEvents.map((event) => (
           <div
             key={event.id}  // Clé unique pour chaque élément de la liste
             className="bg-white rounded-xl shadow hover:shadow-lg transition p-3"
@@ -69,8 +100,9 @@ function EventCard() {
               </Link>
             </div>
           </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
