@@ -52,7 +52,7 @@ class TicketController extends Controller
 
         $ticket->update(['pdf_path' => $pdfPath]);
 
-        TicketPurchased::dispatch($ticket);
+        // TicketPurchased::dispatch($ticket);
 
         return response()->json([
             "message" => "Ticket réservé avec succès 🎫",

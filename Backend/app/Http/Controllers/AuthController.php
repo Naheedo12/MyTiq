@@ -23,8 +23,7 @@ class AuthController extends Controller
             'role' => 'user',
         ]);
 
-        // déclenche l'event — listener lit $user et enverra le mail
-        event(new UserRegistered($user));
+        // event(new UserRegistered($user));
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
