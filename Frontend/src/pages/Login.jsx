@@ -1,12 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { login } from "../services/auth";
+import { AppContext } from "../contexts/AppContext";
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { getAdminData, getUserTickets } = useContext(AppContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +28,12 @@ export default function Login() {
 
         console.log("Token :", result.token);
         console.log("User :", result.user);
+
+        // Populate context data after login
+        if (result.user.role === 'admin') {
+          await getAdminData();
+        }
+        await getUserTickets();
 
         navigate('/');
       } else {

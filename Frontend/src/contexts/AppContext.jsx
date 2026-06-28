@@ -13,12 +13,20 @@ export const AppProvider = ({ children }) => {
 
   const getEvents = async () => {
     try {
-      const token = localStorage.getItem("token");
-
       const eventRes = await axios.get("http://127.0.0.1:8000/api/events");
       setEvents(eventRes.data.events);
+    } catch (err) {
+      console.error("Erreur chargement événements:", err);
+    }
+  };
 
-      // Tickets ADMIN seulement
+  /* ================= ADMIN DATA ================= */
+
+  const getAdminData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
       const ticketRes = await axios.get(
         "http://127.0.0.1:8000/api/ticketsAdmin",
         { headers: { Authorization: `Bearer ${token}` } }
@@ -36,7 +44,64 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  /* ================= USER TICKETS ================= */
+  /* ================= NEWSLETTER SUBSCRIBE ================= */
+
+  const addNew = async (email) => {
+    const res = await axios.post("http://127.0.0.1:8000/api/newsletter/subscribe", { email });
+    return res.data;
+  };
+
+  /* ================= ADD EVENT ================= */
+
+  const addEvent = async (formData) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        "http://127.0.0.1:8000/api/events",
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const newEvent = res.data.event ?? res.data;
+      setEvents((prev) => [...prev, newEvent]);
+      return res.data;
+    } catch (err) {
+      console.error("Erreur ajout événement:", err);
+      throw err;
+    }
+  };
+
+  /* ================= DELETE / UPDATE EVENT ================= */
+
+  const deleteEvent = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://127.0.0.1:8000/api/events/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setEvents((prev) => prev.filter((e) => e.id !== id));
+    } catch (err) {
+      console.error("Erreur suppression événement:", err);
+      throw err;
+    }
+  };
+
+  const updateEvent = async (id, formData) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/events/${id}`,
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEvents((prev) =>
+        prev.map((e) => (e.id === id ? res.data.event ?? res.data.events ?? res.data : e))
+      );
+      return res.data;
+    } catch (err) {
+      console.error("Erreur modification événement:", err);
+      throw err;
+    }
+  };
 
   const getUserTickets = async () => {
     try {
@@ -47,8 +112,10 @@ export const AppProvider = ({ children }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setUserTickets(res.data.tickets);
-      return res.data.tickets;
+      // Backend returns a plain array
+      const tickets = Array.isArray(res.data) ? res.data : res.data.tickets ?? [];
+      setUserTickets(tickets);
+      return tickets;
 
     } catch (err) {
       console.error("Erreur récupération tickets user:", err);
@@ -108,10 +175,21 @@ export const AppProvider = ({ children }) => {
   /* ================= INIT ================= */
 
   useEffect(() => {
-    getEvents(); // admin data
+    getEvents(); // public events
 
-    if (localStorage.getItem("token")) {
-      getUserTickets(); // user data
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (token) {
+      getUserTickets();
+
+      // Only fetch admin data if user is admin
+      if (user) {
+        const parsedUser = JSON.parse(user);
+        if (parsedUser.role === "admin") {
+          getAdminData();
+        }
+      }
     }
   }, []);
 
@@ -124,9 +202,14 @@ export const AppProvider = ({ children }) => {
         newsletter,
         adminTickets,
         userTickets,
+        getAdminData,
         getUserTickets,
         purchaseTicket,
         downloadTicketPdf,
+        addEvent,
+        deleteEvent,
+        updateEvent,
+        addNew,
       }}
     >
       {children}

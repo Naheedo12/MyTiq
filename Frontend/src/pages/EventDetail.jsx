@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../contexts/AppContext";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -6,6 +6,9 @@ function EventDetail() {
   const { events, purchaseTicket } = useContext(AppContext);
   const { id } = useParams();
   const navigate = useNavigate();
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const event = events.find((e) => e.id.toString() === id);
 
@@ -29,25 +32,29 @@ function EventDetail() {
     });
   };
 
-  const handleBuyTicket = () => {
+  const handleBuyTicket = async () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      alert("Veuillez vous connecter pour acheter un ticket");
+      setErrorMsg("Veuillez vous connecter pour acheter un ticket.");
       navigate("/login");
       return;
     }
 
-    // Afficher immédiatement le message de succès
-    alert("Achat de ticket fait avec succès ! Vous allez recevoir un email de confirmation.");
+    setLoading(true);
+    setSuccessMsg("");
+    setErrorMsg("");
 
-    // Faire l'achat en arrière-plan
-    purchaseTicket(event.id).catch((err) => {
+    try {
+      await purchaseTicket(event.id);
+      setSuccessMsg("Achat de ticket fait avec succès ! Vous allez recevoir un email de confirmation.");
+      setTimeout(() => navigate("/ticket"), 2500);
+    } catch (err) {
       console.error("Erreur lors de l'achat :", err);
-    });
-
-    // Rediriger vers la page des tickets
-    navigate("/ticket");
+      setErrorMsg(err.response?.data?.message || "Erreur lors de l'achat. Veuillez réessayer.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -84,11 +91,23 @@ function EventDetail() {
           <p className="text-gray-500 text-sm mb-1">Starting from</p>
           <p className="text-3xl font-bold mb-6">{event.price} DH</p>
 
+          {successMsg && (
+            <div className="mb-4 bg-green-100 border border-green-400 text-green-800 text-sm px-4 py-3 rounded-lg">
+              ✅ {successMsg}
+            </div>
+          )}
+          {errorMsg && (
+            <div className="mb-4 bg-red-100 border border-red-400 text-red-700 text-sm px-4 py-3 rounded-lg">
+              ❌ {errorMsg}
+            </div>
+          )}
+
           <button
             onClick={handleBuyTicket}
-            className="w-full bg-[#40916C] hover:bg-green-800 text-white py-3 rounded-md font-semibold transition-colors"
+            disabled={loading}
+            className="w-full bg-[#40916C] hover:bg-green-800 text-white py-3 rounded-md font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Buy Ticket
+            {loading ? "Traitement en cours..." : "Buy Ticket"}
           </button>
         </div>
       </section>

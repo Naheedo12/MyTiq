@@ -8,8 +8,22 @@ import EventDetail from "./pages/EventDetail";
 import Dashboard from "./pages/Dashboard";
 import Ticket from "./pages/Ticket";
 import PageLayout from "./pages/Propos"; 
-import { isAuthenticated } from "./services/auth";
+import { isAuthenticated, getCurrentUser } from "./services/auth";
 import TicketTable from "./components/TicketTable";
+
+// Evaluates auth on every render, so it reacts to localStorage changes
+function ProtectedRoute({ children, adminOnly = false }) {
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
+  if (adminOnly) {
+    const user = getCurrentUser();
+    if (!user || user.role !== "admin") {
+      return <Navigate to="/" replace />;
+    }
+  }
+  return children;
+}
 
 function App() {
   return (
@@ -22,19 +36,15 @@ function App() {
         <Route path="/about" element={<><NavBar /><PageLayout /><Footer /></>} />
         
         <Route path="/ticket" element={
-          isAuthenticated() ? (
-            <><NavBar /><Ticket /><Footer /></>
-          ) : (
-            <Navigate to="/login" replace />
-          )
+          <ProtectedRoute>
+            <NavBar /><Ticket /><Footer />
+          </ProtectedRoute>
         } />
         
         <Route path="/dashboard" element={
-          isAuthenticated() ? (
+          <ProtectedRoute adminOnly>
             <Dashboard />
-          ) : (
-            <Navigate to="/login" replace />
-          )
+          </ProtectedRoute>
         } />
 
       </Routes>

@@ -22,7 +22,7 @@ function NavBar() {
         <Link to="/about" className="hover:text-[#40916C] font-medium">About Us</Link>
         <Link to="/ticket" className="hover:text-[#40916C] font-medium">Tickets</Link>
 
-        {authenticated && (
+        {authenticated && user?.role === "admin" && (
           <Link to="/dashboard" className="hover:text-[#40916C] font-medium">
             Dashboard
           </Link>

@@ -9,13 +9,11 @@ import { AppContext } from "../contexts/AppContext";
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState("events");
-  const {tickets} = useContext(AppContext);
-  const {events} = useContext(AppContext);
-  const {newsletter} = useContext(AppContext);
+  const { adminTickets, events, newsletter } = useContext(AppContext);
 
-  const countTickets=tickets.length;
-  const countEvents=events.length;
-  const countNewsletter=newsletter.length;
+  const countTickets = adminTickets?.length ?? 0;
+  const countEvents = events?.length ?? 0;
+  const countNewsletter = newsletter?.length ?? 0;
 
   const renderContent = () => {
     switch (activeSection) {
